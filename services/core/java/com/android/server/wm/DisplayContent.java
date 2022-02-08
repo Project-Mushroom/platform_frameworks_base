@@ -246,6 +246,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import com.android.internal.protolog.ProtoLogImpl;
 
 /**
  * Utility class for keeping track of the WindowStates and other pertinent contents of a
@@ -3969,11 +3970,18 @@ class DisplayContent extends RootDisplayArea implements WindowManagerPolicy.Disp
      * which controls the visibility and animation of the input method window.
      */
     void updateImeInputAndControlTarget(WindowState target) {
+        if(!(target == null || target.mActivityRecord == null)){
+            target.mActivityRecord.mImeInsetsFrozenUntilStartInput = false;
+        }
         if (mImeInputTarget != target) {
-            ProtoLog.i(WM_DEBUG_IME, "setInputMethodInputTarget %s", target);
-            if (target != null && target.mActivityRecord != null) {
-                target.mActivityRecord.mImeInsetsFrozenUntilStartInput = false;
+            if(ProtoLogCache.WM_DEBUG_IME_enabled){
+                String mTarget = String.valueOf(target);
+                ProtoLogImpl.i(WM_DEBUG_IME, -322743468, 0, (String) null, new Object[]{mTarget});
             }
+            //ProtoLog.i(WM_DEBUG_IME, "setInputMethodInputTarget %s", target);
+            //if (target != null && target.mActivityRecord != null) {
+            //    target.mActivityRecord.mImeInsetsFrozenUntilStartInput = false;
+            //}
             setImeInputTarget(target);
             updateImeControlTarget();
         }
